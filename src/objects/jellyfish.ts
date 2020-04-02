@@ -7,7 +7,7 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
     scene.physics.world.enable(this)
     scene.add.existing(this)
 
-    const size = 40
+    const size = 32
     this.body.setSize(size)
     this.displayWidth = size
     this.displayHeight = size
@@ -25,8 +25,7 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
   }
 
   jump() {
-    console.log(this.width)
-    this.body.setVelocityY(-300)
+    this.body.setVelocityY(-280)
     this.angle = -20
   }
 }

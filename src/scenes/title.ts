@@ -12,9 +12,8 @@ export default class Title extends Phaser.Scene {
 
   preload() {
     this.load.image("jellyfish", "imgs/jellyfish.png")
-    this.load.image("pipe", "imgs/pipe.png")
-    this.load.image("pipeHead", "imgs/pipe-head.png")
-    this.load.image("pipeHeadReverse", "imgs/pipe-head-reverse.png")
+    this.load.image("pipe-top", "imgs/pipe-top.png")
+    this.load.image("pipe-bottom", "imgs/pipe-bottom.png")
     this.load.image("bg", "imgs/bg.jpg")
   }
 
