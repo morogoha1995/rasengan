@@ -18,14 +18,14 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
     this.addAngle()
   }
 
-  addAngle() {
+  private addAngle() {
     if (this.angle < 60) {
       this.angle++
     }
   }
 
   jump() {
-    this.body.setVelocityY(-280)
+    this.body.setVelocityY(-240)
     this.angle = -20
   }
 }

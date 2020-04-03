@@ -23,6 +23,6 @@ class Gap extends Phaser.GameObjects.Line {
   body!: Phaser.Physics.Arcade.Body
 
   constructor(scene: Phaser.Scene, y: number) {
-    super(scene, WIDTH, y + HEIGHT / 2, 0, 0, 0, 98)
+    super(scene, WIDTH, y + HEIGHT / 2, 0, 0, 0, 0)
   }
 }
