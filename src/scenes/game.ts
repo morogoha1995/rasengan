@@ -4,6 +4,7 @@ import Pipes from "../objects/pipes"
 import Gaps from "../objects/gap"
 import Score from "../objects/score"
 import Box from "../objects/box"
+import { HEIGHT } from "../constants"
 
 export default class Game extends Phaser.Scene {
   private jellyfish!: Jellyfish
@@ -106,7 +107,12 @@ export default class Game extends Phaser.Scene {
     this.jellyfish.update()
     this.pipes.update()
     this.gaps.update()
+
+    if (this.jellyfish.isOffside()) {
+      this.dead()
+    }
   }
+
 
   private start() {
     this.isStart = true

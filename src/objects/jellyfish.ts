@@ -1,5 +1,8 @@
+import { HEIGHT } from "../constants"
+
 export default class Jellyfish extends Phaser.GameObjects.Sprite {
   body!: Phaser.Physics.Arcade.Body
+  size = 32
 
   constructor(scene: Phaser.Scene) {
     super(scene, 90, 80, "jellyfish", 1)
@@ -7,13 +10,14 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
     scene.physics.world.enable(this)
     scene.add.existing(this)
 
-    const size = 32
-    this.body.setSize(size)
-    this.displayWidth = size
-    this.displayHeight = size
+    this.setDisplaySize(this.size, this.size)
     this.body.maxVelocity.y = 800
 
     this.body.allowGravity = false
+  }
+
+  isOffside(): boolean {
+    return 0 > this.y || HEIGHT < this.y
   }
 
   jump() {
