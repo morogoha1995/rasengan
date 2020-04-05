@@ -25,7 +25,10 @@ export default class Title extends Phaser.Scene {
     this.load.image("8", "imgs/number_8.png")
     this.load.image("9", "imgs/number_9.png")
     this.load.image("0", "imgs/number_0.png")
-
+    this.load.image("start", "imgs/start.png")
+    this.load.image("title", "imgs/title.png")
+    this.load.image("gameover", "imgs/gameover.png")
+    this.load.image("restart", "imgs/restart.png")
   }
 
   create() {

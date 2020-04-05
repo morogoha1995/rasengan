@@ -27,7 +27,7 @@ export default class Score extends Phaser.Physics.Arcade.StaticGroup {
     if (scoreLen == 1) {
       this.create(this.x, this.y, score).setDepth(10)
     } else {
-      let initialPosition = this.x - ((scoreLen * this.width) / 2)
+      let initialPosition = this.x - ((scoreLen * this.width) / 4)
 
       for (let i = 0; i < scoreLen; i++) {
         this.create(initialPosition, this.y, score[i]).setDepth(10)

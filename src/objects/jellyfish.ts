@@ -2,7 +2,7 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
   body!: Phaser.Physics.Arcade.Body
 
   constructor(scene: Phaser.Scene) {
-    super(scene, 90, 0, "jellyfish")
+    super(scene, 90, 80, "jellyfish", 1)
 
     scene.physics.world.enable(this)
     scene.add.existing(this)
@@ -12,20 +12,11 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
     this.displayWidth = size
     this.displayHeight = size
     this.body.maxVelocity.y = 800
-  }
 
-  update() {
-    this.addAngle()
-  }
-
-  private addAngle() {
-    if (this.angle < 60) {
-      this.angle++
-    }
+    this.body.allowGravity = false
   }
 
   jump() {
     this.body.setVelocityY(-240)
-    this.angle = -20
   }
 }

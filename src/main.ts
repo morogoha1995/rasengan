@@ -1,5 +1,4 @@
 import Phaser from "phaser"
-import Title from "./scenes/title"
 import Game from "./scenes/game"
 import { WIDTH, HEIGHT } from "./constants"
 
@@ -19,7 +18,6 @@ window.onload = () => {
       }
     },
     scene: [
-      Title,
       Game,
     ]
   })
