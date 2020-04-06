@@ -81,8 +81,8 @@ export default class Game extends Phaser.Scene {
       this.jellyfish.anims.play("jump")
     })
     this.startBox.btn.on("pointerdown", () => { this.start() })
-    this.gameoverBox.btn.on("pointerdown", () => { this.restart() })
     this.startBox.soundConfig.on("pointerdown", () => { this.switchMute() })
+    this.gameoverBox.btn.on("pointerdown", () => { this.restart() })
     this.gameoverBox.soundConfig.on("pointerdown", () => { this.switchMute() })
 
     this.physics.add.collider(this.jellyfish, this.pipes, this.dead, undefined, this)
