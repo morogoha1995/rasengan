@@ -14,6 +14,7 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
     this.body.maxVelocity.y = 800
 
     this.body.allowGravity = false
+    this.body.setImmovable(true)
   }
 
   isOffside(): boolean {

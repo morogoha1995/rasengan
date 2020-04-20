@@ -23,6 +23,7 @@ export default class Pipes extends Phaser.Physics.Arcade.Group {
   make(y: number) {
     const pipeTop = this.create(WIDTH, y, "pipe-top")
     pipeTop.body.allowGravity = false
+    pipeTop.body.setImmovable(true)
 
     const minGap = 100
     const maxGap = 140
@@ -30,5 +31,6 @@ export default class Pipes extends Phaser.Physics.Arcade.Group {
 
     const pipeBottom = this.create(WIDTH, y + this.height + gapHeight, "pipe-bottom")
     pipeBottom.body.allowGravity = false
+    pipeBottom.body.setImmovable(true)
   }
 }

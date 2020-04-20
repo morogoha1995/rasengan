@@ -1,4 +1,5 @@
 import { WIDTH } from "../constants"
+import { createFontStyle } from "../utils/text"
 
 export default class Box {
   banner: Phaser.GameObjects.Image
@@ -9,60 +10,44 @@ export default class Box {
     const x = WIDTH / 2
 
     this.banner = scene.add.image(x, 130, bannerTexuture)
-    this.banner.setDisplaySize(240, 100)
-    this.banner.setDepth(20)
+      .setDisplaySize(240, 100)
+      .setAlpha(0)
 
-    this.btn = scene.add.image(x, 240, btnTexture)
-    this.btn.setDisplaySize(120, 50)
-    this.btn.setDepth(20)
-    this.btn.setInteractive()
 
-    this.soundConfig = scene.add.text(x, 300, "音：有り", {
-      color: "teal",
-      fontSize: "24px",
-      fontFamily: "Meiryo",
-      fontStyle: "bold",
-      strokeThickness: 3,
-    })
-    this.soundConfig.setOrigin(0.5)
-    this.soundConfig.setDepth(20)
-    this.soundConfig.setInteractive()
+    const btnX = x / 2
+    const btnY = 240
+    this.btn = scene.add.image(btnX / 2, btnY, btnTexture)
+      .setDisplaySize(120, 50)
+      .setAlpha(0)
+      .setOrigin(0, 0.5)
 
-    this.toUnvisible()
-  }
 
-  addAlpha() {
-    if (this.banner.alpha < 1) {
-      this.banner.alpha += 0.02
-      this.btn.alpha += 0.02
-      this.soundConfig.alpha += 0.02
-    }
+    this.soundConfig = scene.add.text(btnX * 3, btnY, "音：有り", createFontStyle("teal"))
+      .setOrigin(0.5)
+      .setAlpha(0)
   }
 
   switchSoundConfigText(isMute: boolean) {
-    if (isMute) {
-      this.soundConfig.text = "音：無し"
-    } else {
-      this.soundConfig.text = "音：有り"
-    }
-  }
-
-  private initAlpha() {
-    this.banner.alpha = 0
-    this.btn.alpha = 0
-    this.soundConfig.alpha = 0
-  }
-
-  toVisible() {
-    this.banner.visible = true
-    this.btn.visible = true
-    this.soundConfig.visible = true
+    this.soundConfig.text = isMute ? "音：無し" : "音：有り"
   }
 
   toUnvisible() {
-    this.banner.visible = false
-    this.btn.visible = false
-    this.soundConfig.visible = false
-    this.initAlpha()
+    this.banner.setVisible(false)
+    this.btn.setVisible(false)
+    this.soundConfig.setVisible(false)
   }
+
+  tween(scene: Phaser.Scene) {
+    scene.add.tween({
+      targets: [this.banner, this.btn, this.soundConfig],
+      duration: 1000,
+      alpha: 1,
+      onComplete: () => {
+        this.btn.setInteractive()
+        this.soundConfig.setInteractive()
+      }
+    })
+  }
+
+
 }

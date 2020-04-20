@@ -4,46 +4,26 @@ import Pipes from "../objects/pipes"
 import Gaps from "../objects/gap"
 import Score from "../objects/score"
 import Box from "../objects/box"
-import { HEIGHT } from "../constants"
+import { HEIGHT, WIDTH } from "../constants"
+import { createFontStyle } from "../utils/text"
 
 export default class Game extends Phaser.Scene {
   private jellyfish!: Jellyfish
   private pipes!: Pipes
   private gaps!: Gaps
   private score!: Score
-  private startBox!: Box
-  private gameoverBox!: Box
 
   private isStart = false
-  private isGameover = false
   private isMute = false
+  private isRestart = false
 
   constructor() {
     super({ key: "game" })
   }
 
-  preload() {
-    this.load.image("pipe-top", "imgs/pipe-top.png")
-    this.load.image("pipe-bottom", "imgs/pipe-bottom.png")
-    this.load.image("bg", "imgs/bg.jpg")
-    this.load.image("1", "imgs/number_1.png")
-    this.load.image("2", "imgs/number_2.png")
-    this.load.image("3", "imgs/number_3.png")
-    this.load.image("4", "imgs/number_4.png")
-    this.load.image("5", "imgs/number_5.png")
-    this.load.image("6", "imgs/number_6.png")
-    this.load.image("7", "imgs/number_7.png")
-    this.load.image("8", "imgs/number_8.png")
-    this.load.image("9", "imgs/number_9.png")
-    this.load.image("0", "imgs/number_0.png")
-    this.load.image("start", "imgs/start.png")
-    this.load.image("title", "imgs/title.png")
-    this.load.image("gameover", "imgs/gameover.png")
-    this.load.image("restart", "imgs/restart.png")
-    this.load.spritesheet("jellyfish", "imgs/jellyfishsheet.png", { frameWidth: 32, frameHeight: 32 })
-
-    this.load.audio("score", "sound/score.mp3")
-    this.load.audio("dead", "sound/dead.mp3")
+  init(data: any) {
+    this.isRestart = data.isRestart || false
+    this.isMute = data.isMute || false
   }
 
   create() {
@@ -70,60 +50,61 @@ export default class Game extends Phaser.Scene {
     this.gaps = new Gaps(this.physics.world, this)
     this.pipes = new Pipes(this.physics.world, this)
     this.score = new Score(this.physics.world, this)
-    this.startBox = new Box(this, "title", "start")
-    this.gameoverBox = new Box(this, "gameover", "restart")
-
-    this.input.on("pointerdown", () => {
-      if (!this.isStart || this.isGameover)
-        return
-
-      this.jellyfish.jump()
-      this.jellyfish.anims.play("jump")
-    })
-    this.startBox.btn.on("pointerdown", () => { this.start() })
-    this.startBox.soundConfig.on("pointerdown", () => { this.switchMute() })
-    this.gameoverBox.btn.on("pointerdown", () => { this.restart() })
-    this.gameoverBox.soundConfig.on("pointerdown", () => { this.switchMute() })
 
     this.physics.add.collider(this.jellyfish, this.pipes, this.dead, undefined, this)
     this.physics.add.overlap(this.jellyfish, this.gaps, this.addScore, undefined, this)
 
     this.makePipes()
     this.score.init()
-    this.startBox.toVisible()
+
+    if (!this.isRestart)
+      this.createStartBox()
+    else
+      this.start()
+
+    this.input.on("pointerdown", () => {
+      if (!this.isStart)
+        return
+
+      this.jellyfish.jump()
+      this.jellyfish.anims.play("jump")
+    })
   }
 
   update() {
-    if (!this.isStart) {
-      this.startBox.addAlpha()
+    if (!this.isStart)
       return
-    }
-
-    if (this.isGameover) {
-      this.gameoverBox.addAlpha()
-      return
-    }
 
     this.jellyfish.update()
     this.pipes.update()
     this.gaps.update()
 
-    if (this.jellyfish.isOffside()) {
+    if (this.jellyfish.isOffside())
       this.dead()
-    }
   }
-
 
   private start() {
     this.isStart = true
-    this.startBox.toUnvisible()
     this.jellyfish.body.allowGravity = true
+    this.sound.mute = this.isMute
+  }
+
+  private createStartBox() {
+    const startBox = new Box(this, "title", "start")
+    startBox.switchSoundConfigText(this.isMute)
+    startBox.btn.on("pointerdown", () => {
+      this.start()
+      startBox.toUnvisible()
+    })
+    startBox.soundConfig.on("pointerdown", () => {
+      this.switchMute()
+      startBox.switchSoundConfigText(this.isMute)
+    })
+    startBox.tween(this)
   }
 
   private switchMute() {
     this.isMute = !this.isMute
-    this.startBox.switchSoundConfigText(this.isMute)
-    this.gameoverBox.switchSoundConfigText(this.isMute)
   }
 
   private makePipes() {
@@ -136,7 +117,7 @@ export default class Game extends Phaser.Scene {
 
   private addScore(_: any, gap: any) {
     gap.destroy()
-    this.playSound("score")
+    this.sound.play("score")
     this.makePipes()
     this.score.renew()
   }
@@ -144,26 +125,37 @@ export default class Game extends Phaser.Scene {
   private dead() {
     this.physics.pause()
     this.jellyfish.anims.play("dead")
-    this.isGameover = true
-    this.gameoverBox.toVisible()
-    this.playSound("dead")
-  }
+    this.isStart = false
+    this.sound.play("dead")
 
-  private playSound(key: string) {
-    if (!this.isMute)
-      this.sound.play(key)
-  }
+    const gameoverBox = new Box(this, "gameover", "restart")
+    gameoverBox.switchSoundConfigText(this.isMute)
+    gameoverBox.btn.on("pointerdown", () => this.scene.restart({ isRestart: true, isMute: this.isMute }))
+    gameoverBox.soundConfig.on("pointerdown", () => {
+      this.isMute = !this.isMute
+      gameoverBox.switchSoundConfigText(this.isMute)
+    })
+    gameoverBox.tween(this)
 
-  private restart() {
-    this.pipes.clear(true, true)
-    this.gaps.clear(true, true)
-    this.jellyfish.y = 80
-    this.jellyfish.body.setVelocityX(0)
-    this.makePipes()
-    this.score.init()
-    this.isGameover = false
-    this.gameoverBox.toUnvisible()
+    const url = "https://meisoudev.com/games/flappyjelly/"
+    const tweetURL = `https://twitter.com/intent/tweet?text=超えた土管の数：${this.score.score}&url=${url}&hashtags=飛ぶクラゲ`
 
-    this.physics.resume()
+    const tweetText = this.add.text(
+      WIDTH / 2,
+      310,
+      "ツイートする",
+      createFontStyle("royalblue"))
+      .setOrigin(0.5)
+      .on("pointerdown", () => {
+        window.open(tweetURL, "blank")
+      })
+      .setAlpha(0)
+
+    this.add.tween({
+      targets: tweetText,
+      duration: 800,
+      alpha: 1,
+      onComplete: () => tweetText.setInteractive()
+    })
   }
 }
