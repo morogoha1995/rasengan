@@ -11,9 +11,8 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
     scene.add.existing(this)
 
     this.setDisplaySize(this.size, this.size)
-    this.body.maxVelocity.y = 800
-
-    this.body.allowGravity = false
+    this.body.setMaxVelocity(0, 800)
+    this.body.setAllowGravity(false)
     this.body.setImmovable(true)
   }
 
@@ -23,5 +22,6 @@ export default class Jellyfish extends Phaser.GameObjects.Sprite {
 
   jump() {
     this.body.setVelocityY(-240)
+    this.anims.play("jump")
   }
 }

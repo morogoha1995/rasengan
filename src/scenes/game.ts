@@ -4,7 +4,7 @@ import Pipes from "../objects/pipes"
 import Gaps from "../objects/gap"
 import Score from "../objects/score"
 import Box from "../objects/box"
-import { HEIGHT, WIDTH } from "../constants"
+import { WIDTH } from "../constants"
 import { createFontStyle } from "../utils/text"
 
 export default class Game extends Phaser.Scene {
@@ -28,6 +28,11 @@ export default class Game extends Phaser.Scene {
 
   create() {
     this.add.image(0, 0, "bg").setOrigin(0)
+    this.jellyfish = new Jellyfish(this)
+    this.gaps = new Gaps(this.physics.world, this)
+    this.pipes = new Pipes(this.physics.world, this)
+    this.score = new Score(this.physics.world, this)
+
     this.anims.create({
       key: "jump",
       frames: this.anims.generateFrameNumbers("jellyfish", {
@@ -46,29 +51,22 @@ export default class Game extends Phaser.Scene {
       frameRate: 20
     })
 
-    this.jellyfish = new Jellyfish(this)
-    this.gaps = new Gaps(this.physics.world, this)
-    this.pipes = new Pipes(this.physics.world, this)
-    this.score = new Score(this.physics.world, this)
-
     this.physics.add.collider(this.jellyfish, this.pipes, this.dead, undefined, this)
     this.physics.add.overlap(this.jellyfish, this.gaps, this.addScore, undefined, this)
 
     this.makePipes()
-    this.score.init()
-
-    if (!this.isRestart)
-      this.createStartBox()
-    else
-      this.start()
 
     this.input.on("pointerdown", () => {
       if (!this.isStart)
         return
 
       this.jellyfish.jump()
-      this.jellyfish.anims.play("jump")
     })
+
+    if (!this.isRestart)
+      this.createStartBox()
+    else
+      this.start()
   }
 
   update() {
@@ -85,7 +83,7 @@ export default class Game extends Phaser.Scene {
 
   private start() {
     this.isStart = true
-    this.jellyfish.body.allowGravity = true
+    this.jellyfish.body.setAllowGravity(true)
     this.sound.mute = this.isMute
   }
 
@@ -117,8 +115,8 @@ export default class Game extends Phaser.Scene {
 
   private addScore(_: any, gap: any) {
     gap.destroy()
-    this.sound.play("score")
     this.makePipes()
+    this.sound.play("score")
     this.score.renew()
   }
 
@@ -137,6 +135,7 @@ export default class Game extends Phaser.Scene {
     })
     gameoverBox.tween(this)
 
+    // ツイート用のテキスト生成
     const url = "https://meisoudev.com/games/flappyjelly/"
     const tweetURL = `https://twitter.com/intent/tweet?text=超えた土管の数：${this.score.score}&url=${url}&hashtags=飛ぶクラゲ`
 

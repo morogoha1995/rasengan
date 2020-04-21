@@ -13,17 +13,17 @@ export default class Box {
       .setDisplaySize(240, 100)
       .setAlpha(0)
 
-
     const btnX = x / 2
     const btnY = 240
+
     this.btn = scene.add.image(btnX / 2, btnY, btnTexture)
       .setDisplaySize(120, 50)
       .setAlpha(0)
       .setOrigin(0, 0.5)
 
-
-    this.soundConfig = scene.add.text(btnX * 3, btnY, "音：有り", createFontStyle("teal"))
-      .setOrigin(0.5)
+    const padding = 20
+    this.soundConfig = scene.add.text(btnX * 2 + padding, btnY, "音：有り", createFontStyle("teal"))
+      .setOrigin(0, 0.5)
       .setAlpha(0)
   }
 
@@ -48,6 +48,4 @@ export default class Box {
       }
     })
   }
-
-
 }

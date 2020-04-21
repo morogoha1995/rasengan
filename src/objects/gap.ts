@@ -14,8 +14,8 @@ export default class Gaps extends Phaser.Physics.Arcade.Group {
   make(y: number) {
     const gap = new Gap(this.scene, y)
     this.add(gap)
-    gap.body.allowGravity = false
-    gap.visible = false
+    gap.body.setAllowGravity(false)
+    gap.setVisible(false)
   }
 }
 

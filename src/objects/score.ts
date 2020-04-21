@@ -9,11 +9,7 @@ export default class Score extends Phaser.Physics.Arcade.StaticGroup {
 
   constructor(world: Phaser.Physics.Arcade.World, scene: Phaser.Scene) {
     super(world, scene)
-  }
 
-  init() {
-    this.clear(true, true)
-    this.score = 0
     this.create(this.x, this.y, "0").setDepth(10)
   }
 
